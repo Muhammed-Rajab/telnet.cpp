@@ -186,8 +186,6 @@ void playKittySays(int client_socket)
         if (bytes > 0 && (ch == 'c' || ch == 'C'))
             quotes = Quotes::getRandomQuotes(2);
     }
-
-    close(client_socket);
 }
 
 #endif

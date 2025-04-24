@@ -7,6 +7,8 @@
 #include <netinet/in.h>
 
 #include "include/utils.hpp"
+
+#include "include/cube.hpp"
 #include "include/kitty_says.hpp"
 
 #define LOG std::cout
@@ -93,6 +95,7 @@ Choose an option [1-3]: )";
     }
     else if (choice == "2")
     {
+        playCube(client_socket);
     }
     else
     {
