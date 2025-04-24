@@ -170,6 +170,14 @@ namespace Cube
                 }
             }
 
+            // WATERMARK
+            std::string watermark = "CUBE";
+            int index = (height / 2) * width + width / 2 - watermark.length() / 2;
+            buffer[index] = 'C';
+            buffer[index + 1] = 'U';
+            buffer[index + 2] = 'B';
+            buffer[index + 3] = 'E';
+
             // RENDER
             std::string canvas = render();
             send(client_socket, canvas.c_str(), canvas.length(), 0);
