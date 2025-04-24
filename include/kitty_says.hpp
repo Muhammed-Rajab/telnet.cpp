@@ -133,7 +133,7 @@ namespace Quotes
 void playKittySays(int client_socket)
 {
 
-    std::vector<std::vector<std::string>> kittyFrames = {
+    std::vector<std::vector<std::string>> kitty_frames = {
         {
             "  /\\_/\\ ",
             " ( o.o ) ",
@@ -156,8 +156,8 @@ void playKittySays(int client_socket)
         },
     };
 
-    int frame_count = kittyFrames.size();
-    int frameIndex = 0;
+    int frame_count = kitty_frames.size();
+    int frame_index = 0;
 
     std::string clear_move = "\x1B[2J\x1B[H\x1B[3J";
 
@@ -169,7 +169,7 @@ void playKittySays(int client_socket)
     char ch;
     while (true)
     {
-        std::vector<std::string> frame = kittyFrames.at(frameIndex);
+        std::vector<std::string> frame = kitty_frames.at(frame_index);
 
         std::string composed_frame = Colors::Bold + Colors::Italic + "\n" + frame[0] + "\n" + frame[1] + Colors::Red + quotes[0] + "\n" + Colors::Reset + frame[2] + Colors::Bright_White + Colors::Underline + quotes[1] + "\n" + Colors::Reset;
 
@@ -178,7 +178,7 @@ void playKittySays(int client_socket)
         send(client_socket, composed.c_str(), composed.length(), 0);
         usleep(300000);
 
-        frameIndex = (frameIndex + 1) % frame_count;
+        frame_index = (frame_index + 1) % frame_count;
 
         ssize_t bytes = recv(client_socket, &ch, 1, MSG_DONTWAIT);
         if (bytes > 0 && (ch == 'q' || ch == 'Q'))
