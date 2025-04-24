@@ -6,10 +6,10 @@
 namespace Cube
 {
 
-    const int width = 80;
-    const int height = 44;
+    const int width = 40;
+    const int height = 22;
 
-    char bg_ascii_char = ' ';
+    char bg_ascii_char = '.';
 
     char buffer[width * height] = {};
 
@@ -17,7 +17,7 @@ namespace Cube
     float B = 0;
     float C = 0;
 
-    float cube_side = 8;
+    float cube_side = 5;
 
     //--------------------------------------->
     // CUBE DATA
@@ -110,10 +110,6 @@ namespace Cube
                 float y = calculateY(v.x, v.y, v.z);
                 float z = calculateZ(v.x, v.y, v.z) + 25;
 
-                // XXX: IDK WTF IS THIS
-                if (z <= 0)
-                    continue;
-
                 float ooz = 1 / z;
 
                 int K1 = 60;
@@ -139,6 +135,7 @@ namespace Cube
 
                 char ch = '#';
 
+                // BRESENHAM'S LINE ALGORITHM
                 int dx = std::abs(x1 - x0), dy = -std::abs(y1 - y0);
                 int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
                 int err = dx + dy;
