@@ -110,6 +110,24 @@ namespace Quotes
 
         return getQuotes(absurd, count);
     }
+
+    std::vector<std::string> getRandomQuotes(size_t count)
+    {
+        // XXX:
+        if (count > absurd.size())
+        {
+            throw "we only have 8 quotes per category. keep count <= 8";
+        }
+
+        std::vector<std::string> *categories[4] = {
+            &nihil, &absurd, &existential, &stoic};
+
+        std::random_device rd;  // true random seed
+        std::mt19937 gen(rd()); // Mersenne Twister RNG
+        std::uniform_int_distribution<> dist(0, 3);
+
+        return getQuotes(*(categories[dist(gen)]), count);
+    }
 };
 
 void playKittySays(int client_socket)
@@ -143,8 +161,9 @@ void playKittySays(int client_socket)
 
     std::string clear_move = "\x1B[2J\x1B[H\x1B[3J";
 
-    auto quotes = Quotes::getNihilQuotes(2);
+    auto quotes = Quotes::getRandomQuotes(2);
 
+    std::string kitty_says = Colors::Bright_Black + Colors::Italic + "kitty says...\n" + Colors::Reset;
     std::string endMenu = Colors::Bright_Black + "\n[q]uit         [c]hange" + Colors::Reset;
 
     char ch;
@@ -154,7 +173,7 @@ void playKittySays(int client_socket)
 
         std::string composed_frame = Colors::Bold + Colors::Italic + "\n" + frame[0] + "\n" + frame[1] + Colors::Red + quotes[0] + "\n" + Colors::Reset + frame[2] + Colors::Bright_White + Colors::Underline + quotes[1] + "\n" + Colors::Reset;
 
-        std::string composed = (clear_move + composed_frame + endMenu);
+        std::string composed = clear_move + kitty_says + composed_frame + endMenu;
 
         send(client_socket, composed.c_str(), composed.length(), 0);
         usleep(300000);
@@ -165,7 +184,7 @@ void playKittySays(int client_socket)
         if (bytes > 0 && (ch == 'q' || ch == 'Q'))
             break;
         if (bytes > 0 && (ch == 'c' || ch == 'C'))
-            quotes = Quotes::getStoicQuotes(2);
+            quotes = Quotes::getRandomQuotes(2);
     }
 
     close(client_socket);
