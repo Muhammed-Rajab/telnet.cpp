@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <sys/socket.h>
 
+#include "colors.hpp"
+
 namespace Quotes
 {
     std::vector<std::string> absurd = {
@@ -143,14 +145,14 @@ void playKittySays(int client_socket)
 
     auto quotes = Quotes::getNihilQuotes(2);
 
-    std::string endMenu = "\n[q]uit         [c]hange";
+    std::string endMenu = Colors::Bright_Black + "\n[q]uit         [c]hange" + Colors::Reset;
 
     char ch;
     while (true)
     {
         std::vector<std::string> frame = kittyFrames.at(frameIndex);
 
-        std::string composed_frame = "\n" + frame[0] + "\n" + frame[1] + quotes[0] + "\n" + frame[2] + quotes[1] + "\n";
+        std::string composed_frame = Colors::Bold + Colors::Italic + "\n" + frame[0] + "\n" + frame[1] + Colors::Red + quotes[0] + "\n" + Colors::Reset + frame[2] + Colors::Bright_White + Colors::Underline + quotes[1] + "\n" + Colors::Reset;
 
         std::string composed = (clear_move + composed_frame + endMenu);
 
