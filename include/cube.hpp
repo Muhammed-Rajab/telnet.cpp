@@ -1,15 +1,20 @@
+#ifndef CUBE_HPP
+#define CUBE_HPP
+
 #include <iostream>
+#include <sstream>
 #include <cmath>
 #include <cstring>
 #include <unistd.h>
+#include <sys/socket.h>
 
 namespace Cube
 {
 
-    const int width = 40;
-    const int height = 22;
+    const int width = 60;
+    const int height = 33;
 
-    char bg_ascii_char = '.';
+    char bg_ascii_char = ' ';
 
     char buffer[width * height] = {};
 
@@ -17,7 +22,7 @@ namespace Cube
     float B = 0;
     float C = 0;
 
-    float cube_side = 5;
+    float cube_side = 7;
 
     //--------------------------------------->
     // CUBE DATA
@@ -56,17 +61,21 @@ namespace Cube
         {3, 7} // connecting edges
     };
 
-    void render()
+    std::string render()
     {
-        std::cout << "\x1b[H";
+        std::ostringstream oss;
+
+        oss << "\x1b[H";
         for (int y = 0; y < height; y += 1)
         {
             for (int x = 0; x < width; x += 1)
             {
-                std::cout << buffer[y * width + x];
+                oss << buffer[y * width + x];
             }
-            std::cout << "\n";
+            oss << "\n";
         }
+
+        return oss.str();
     }
 
     float calculateX(int i, int j, int k)
@@ -162,7 +171,8 @@ namespace Cube
             }
 
             // RENDER
-            render();
+            std::string canvas = render();
+            send(client_socket, canvas.c_str(), canvas.length(), 0);
 
             // UPDATE
             A += 0.05;
@@ -175,8 +185,4 @@ namespace Cube
     }
 }
 
-int main()
-{
-    Cube::play(1);
-    return EXIT_SUCCESS;
-}
+#endif

@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 
 #include "include/utils.hpp"
+#include "include/cube.hpp"
 
 // #include "include/cube.hpp"
 #include "include/kitty_says.hpp"
@@ -95,7 +96,7 @@ Choose an option [1-3]: )";
     }
     else if (choice == "2")
     {
-        // Cube::play(client_socket);
+        Cube::play(client_socket);
     }
     else
     {
