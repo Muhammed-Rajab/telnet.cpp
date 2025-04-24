@@ -66,23 +66,12 @@ public:
 
 void handler(int client_socket)
 {
-    // CLEAR SCREEN
-    clear_screen(client_socket);
+    bool running = true;
+    do
+    {
+        clear_screen(client_socket);
 
-    clear_screen(client_socket);
-
-    // TODO: MAKE THIS SHIT LOOK APPETIZING
-    //     std::string menu = R"(
-    // ┌────────────────────────────────────┐
-    // │         :: TELNET.CPP ::           │
-    // ├────────────────────────────────────┤
-    // │  [1] => Kitty Says...              │
-    // │  [2] => Cube Renderer              │
-    // │  [3] => Exit                       │
-    // └────────────────────────────────────┘
-    // Choose your destiny [1-3]: )";
-
-    std::string menu = R"(
+        std::string menu = R"(
 [:: telnet.cpp interface ::]
 
   1 > kitty.says()
@@ -91,25 +80,30 @@ void handler(int client_socket)
 
 ~ run [1-3] >> )";
 
-    std::string choice = prompt(client_socket, menu, 2);
+        std::string choice = prompt(client_socket, menu, 2);
 
-    clear_screen(client_socket);
-
-    if (choice == "1")
-    {
-        Kittysays::play(client_socket);
-    }
-    else if (choice == "2")
-    {
-        Cube c;
-        c.play(client_socket);
-    }
-    else
-    {
         clear_screen(client_socket);
-        std::string message = "CIAO CIAO!\n";
-        send(client_socket, message.c_str(), message.length(), 0);
-    }
+
+        if (choice == "1")
+        {
+            if (!Kittysays::play(client_socket))
+            {
+                break;
+            }
+        }
+        else if (choice == "2")
+        {
+            Cube c;
+            c.play(client_socket);
+        }
+        else
+        {
+            clear_screen(client_socket);
+            std::string message = "CIAO CIAO!\n";
+            send(client_socket, message.c_str(), message.length(), 0);
+            break;
+        }
+    } while (true);
 
     close(client_socket);
 }

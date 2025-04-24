@@ -133,7 +133,7 @@ namespace Kittysays
         }
     };
 
-    void play(int client_socket)
+    bool play(int client_socket)
     {
         std::vector<std::vector<std::string>> kitty_frames = {
             {
@@ -166,7 +166,7 @@ namespace Kittysays
         auto quotes = Quotes::getRandomQuotes(2);
 
         std::string kitty_says = Colors::Bright_Black + Colors::Italic + "kitty says...\n" + Colors::Reset;
-        std::string endMenu = Colors::Bright_Black + "\n[q]uit         [c]hange" + Colors::Reset;
+        std::string endMenu = Colors::Bright_Black + "\n[q]uit         [c]hange        [m]enu" + Colors::Reset;
 
         char ch;
 
@@ -185,10 +185,23 @@ namespace Kittysays
 
             ssize_t bytes = recv(client_socket, &ch, 1, MSG_DONTWAIT);
             if (bytes > 0 && (ch == 'q' || ch == 'Q'))
-                break;
+            {
+                flush_socket(client_socket);
+                return false;
+            }
             if (bytes > 0 && (ch == 'c' || ch == 'C'))
+            {
+                flush_socket(client_socket);
                 quotes = Quotes::getRandomQuotes(2);
+            }
+            if (bytes > 0 && (ch == 'm' || ch == 'M'))
+            {
+                flush_socket(client_socket);
+                return true;
+            }
         }
+
+        return false;
     }
 }
 

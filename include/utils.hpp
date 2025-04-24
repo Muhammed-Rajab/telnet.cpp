@@ -5,6 +5,24 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+#include <fcntl.h>
+
+void flush_socket(int sockfd)
+{
+    // Set socket to non-blocking
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+
+    char temp[1024];
+    while (recv(sockfd, temp, sizeof(temp), 0) > 0)
+    {
+        // just drain
+    }
+
+    // Reset socket to original mode
+    fcntl(sockfd, F_SETFL, flags);
+}
+
 void clear_screen(int client_socket)
 {
     std::string clear_move = "\x1B[2J\x1B[H\x1B[3J";
