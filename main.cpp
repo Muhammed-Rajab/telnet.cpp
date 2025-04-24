@@ -67,19 +67,6 @@ void handler(int client_socket)
     // CLEAR SCREEN
     clear_screen(client_socket);
 
-    // // ASK FOR COLOR
-    // bool isColored = false;
-    // std::string coloredOutputPrompt = prompt(client_socket, "ansi color supported terminal? [Yy|Nn|anything=n] ", 2);
-
-    // if (coloredOutputPrompt == "y" || coloredOutputPrompt == "Y")
-    // {
-    //     std::cout << "Colored input, it is :)" << std::endl;
-    // }
-    // else
-    // {
-    //     std::cout << "No colored input, it is :(" << std::endl;
-    // }
-
     clear_screen(client_socket);
 
     // TODO: MAKE THIS SHIT LOOK APPETIZING
@@ -88,7 +75,7 @@ void handler(int client_socket)
 |            telnet.cpp              |
 =------------------------------------=
 
-    1. kitty said!
+    1. kitty says...
     2. cube.cpp
     3. bye!
 
