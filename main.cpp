@@ -72,18 +72,24 @@ void handler(int client_socket)
     clear_screen(client_socket);
 
     // TODO: MAKE THIS SHIT LOOK APPETIZING
+    //     std::string menu = R"(
+    // ┌────────────────────────────────────┐
+    // │         :: TELNET.CPP ::           │
+    // ├────────────────────────────────────┤
+    // │  [1] => Kitty Says...              │
+    // │  [2] => Cube Renderer              │
+    // │  [3] => Exit                       │
+    // └────────────────────────────────────┘
+    // Choose your destiny [1-3]: )";
+
     std::string menu = R"(
-=------------------------------------=
-|            telnet.cpp              |
-=------------------------------------=
+[:: telnet.cpp interface ::]
 
-    1. kitty says...
-    2. cube.cpp
-    3. bye!
+  1 > kitty.says()
+  2 > cube.render()
+  3 > system.exit()
 
-=------------------------------------=
-
-Choose an option [1-3]: )";
+~ run [1-3] >> )";
 
     std::string choice = prompt(client_socket, menu, 2);
 
