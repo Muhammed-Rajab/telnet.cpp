@@ -6,6 +6,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "include/utils.hpp"
+#include "include/kitty_says.hpp"
+
 #define LOG std::cout
 #define NL "\n"
 
@@ -59,77 +62,57 @@ public:
     }
 };
 
-void kittyHandler(int client_socket)
-{
-
-    std::string kittyFrames[] = {
-
-        R"(
- /\_/\ 
-( o.o )
- > ^ <
-)",
-
-        R"(
- /\_/\  
-( -.- ) 
- > ^ <  
-)",
-
-        R"(
- /\_/\ 
-( o.o )
- > v < 
-)",
-
-        R"(
- /\_/\ 
-( 0.0 )
- > ^ < 
-)",
-
-        R"(
- /\_/\ 
-( owo )
- > ^ < 
-)"};
-
-    int frame_count = sizeof(kittyFrames) / sizeof(kittyFrames[0]);
-    int frameIndex = 0;
-
-    std::string clear_move = "\x1B[2J\x1B[H\x1B[3J";
-
-    std::string message = "=- HELLO KITTY! -=";
-
-    while (true)
-    {
-        std::string composed = (clear_move + kittyFrames[frameIndex] + message);
-        send(client_socket, composed.c_str(), composed.length(), 0);
-        frameIndex = (frameIndex + 1) % frame_count;
-        usleep(300000);
-    }
-
-    // const char *message = "Hello, telnet boi!\n";
-    // send(client_socket, message, strlen(message), 0);
-
-    // char buffer[1024] = {0};
-    // int byte_read = read(client_socket, buffer, 1024);
-
-    // std::cout << "Received: " << buffer << std::endl;
-
-    close(client_socket);
-}
-
 void handler(int client_socket)
 {
-    // ASK FOR COLOR
-    std::string color_message = "ANSI Color supported terminal? [Yy|Nn]: ";
-    send(client_socket, color_message.c_str(), color_message.length(), 0);
+    // CLEAR SCREEN
+    clear_screen(client_socket);
 
-    char buffer[2] = {0};
-    int byte_read = read(client_socket, buffer, 1);
+    // // ASK FOR COLOR
+    // bool isColored = false;
+    // std::string coloredOutputPrompt = prompt(client_socket, "ansi color supported terminal? [Yy|Nn|anything=n] ", 2);
 
-    std::cout << "Received: " << buffer << std::endl;
+    // if (coloredOutputPrompt == "y" || coloredOutputPrompt == "Y")
+    // {
+    //     std::cout << "Colored input, it is :)" << std::endl;
+    // }
+    // else
+    // {
+    //     std::cout << "No colored input, it is :(" << std::endl;
+    // }
+
+    clear_screen(client_socket);
+
+    // TODO: MAKE THIS SHIT LOOK APPETIZING
+    std::string menu = R"(
+=------------------------------------=
+|            telnet.cpp              |
+=------------------------------------=
+
+    1. kitty said!
+    2. cube.cpp
+    3. bye!
+
+=------------------------------------=
+
+Choose an option [1-3]: )";
+
+    std::string choice = prompt(client_socket, menu, 2);
+
+    clear_screen(client_socket);
+
+    if (choice == "1")
+    {
+        playKittySays(client_socket);
+    }
+    else if (choice == "2")
+    {
+    }
+    else
+    {
+        clear_screen(client_socket);
+        std::string message = "CIAO CIAO!\n";
+        send(client_socket, message.c_str(), message.length(), 0);
+    }
 
     close(client_socket);
 }

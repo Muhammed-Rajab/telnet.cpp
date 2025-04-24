@@ -1,0 +1,38 @@
+#ifndef UTILS_HPP
+#define UTILS_HPP
+
+#include <string>
+#include <unistd.h>
+#include <sys/socket.h>
+
+void clear_screen(int client_socket)
+{
+    std::string clear_move = "\x1B[2J\x1B[H\x1B[3J";
+    int bytes_send = send(client_socket, clear_move.c_str(), clear_move.length(), 0);
+
+    if (bytes_send <= 0)
+    {
+        perror("clear_screen");
+    }
+}
+
+std::string prompt(int client_socket, std::string message, size_t buffer_size)
+{
+    send(client_socket, message.c_str(), message.length(), 0);
+
+    std::string input;
+    char ch;
+    ssize_t bytes;
+
+    while ((bytes = read(client_socket, &ch, 1)) > 0)
+    {
+        if (ch == '\n')
+            break;
+        if (ch != '\r')
+            input += ch;
+    }
+
+    return input;
+}
+
+#endif
