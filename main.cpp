@@ -101,7 +101,8 @@ void handler(int client_socket)
     }
     else if (choice == "2")
     {
-        Cube::play(client_socket);
+        Cube c;
+        c.play(client_socket);
     }
     else
     {

@@ -169,6 +169,7 @@ namespace Kittysays
         std::string endMenu = Colors::Bright_Black + "\n[q]uit         [c]hange" + Colors::Reset;
 
         char ch;
+
         while (true)
         {
             std::vector<std::string> frame = kitty_frames.at(frame_index);
