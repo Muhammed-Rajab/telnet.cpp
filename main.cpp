@@ -91,11 +91,11 @@ Choose an option [1-3]: )";
 
     if (choice == "1")
     {
-        playKittySays(client_socket);
+        Kittysays::play(client_socket);
     }
     else if (choice == "2")
     {
-        playCube(client_socket);
+        Cube::play(client_socket);
     }
     else
     {
