@@ -135,7 +135,6 @@ namespace Kittysays
 
     void play(int client_socket)
     {
-
         std::vector<std::vector<std::string>> kitty_frames = {
             {
                 "  /\\_/\\ ",
