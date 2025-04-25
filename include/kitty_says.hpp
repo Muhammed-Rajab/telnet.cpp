@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 
 #include "colors.hpp"
+#include "utils.hpp"
 
 namespace Kittysays
 {
