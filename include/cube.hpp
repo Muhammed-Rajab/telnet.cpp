@@ -105,8 +105,6 @@ public:
 
     bool play(int client_socket)
     {
-        // fcntl(client_socket, F_SETFL, O_NONBLOCK);
-
         // UPDATE VERTEX BASED ON CUBE SIZE
         for (Vertex &v : vertices)
         {
@@ -223,13 +221,11 @@ public:
                     char c = input_buffer[i];
                     if (c == 'q')
                     {
-                        std::cout << "Received: q -> quit" << std::endl;
                         flush_socket(client_socket);
                         return false;
                     }
                     else if (c == 'm')
                     {
-                        std::cout << "Received: m -> menu" << std::endl;
                         flush_socket(client_socket);
                         return true;
                     }
@@ -243,7 +239,6 @@ public:
                 close(client_socket);
                 std::cout << "DISCONNECTED!" << std::endl;
                 break;
-                // Clean up, maybe return or break loop
             }
             else if (bytes_received < 0 && errno != EWOULDBLOCK && errno != EAGAIN)
             {

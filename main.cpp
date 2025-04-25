@@ -104,8 +104,7 @@ void handler(int client_socket)
         else
         {
             clear_screen(client_socket);
-            std::cout << "ELSE CALLED" << "\n";
-            std::string message = "CIAO CIAO!\n";
+            std::string message = "CIAO!\n\n";
             send(client_socket, message.c_str(), message.length(), 0);
             break;
         }
