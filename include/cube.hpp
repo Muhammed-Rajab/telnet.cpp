@@ -35,12 +35,12 @@ private:
     float B = 0;
     float C = 0;
 
-    float SCALE_THETA = 0;
-
     float cube_side = 7;
 
     std::vector<Vertex> vertices;
     std::vector<std::vector<int>> edges;
+
+    bool is_playing = true;
 
     std::string render()
     {
@@ -191,15 +191,18 @@ public:
 
             // RENDER
             std::string canvas = render();
-            std::string endMenu = Colors::Bright_Black + "\n[q]uit         [m]enu" + Colors::Reset;
+            std::string endMenu = Colors::Bright_Black + "\n[q]uit         [m]enu        [<space>] play/pause " + Colors::Reset;
             canvas = canvas + endMenu;
 
             send(client_socket, canvas.c_str(), canvas.length(), 0);
 
             // UPDATE
-            A += 0.05;
-            B += 0.05;
-            C += 0.01;
+            if (is_playing)
+            {
+                A += 0.05;
+                B += 0.05;
+                C += 0.01;
+            }
 
             // INPUT HANDLING
             char input_buffer[1024];
@@ -228,6 +231,11 @@ public:
                     {
                         flush_socket(client_socket);
                         return true;
+                    }
+                    else if (c == ' ')
+                    {
+                        is_playing = !is_playing;
+                        flush_socket(client_socket);
                     }
                 }
 
