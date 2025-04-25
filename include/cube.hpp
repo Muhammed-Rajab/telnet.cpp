@@ -24,10 +24,10 @@ struct Vertex
 struct Cube
 {
 private:
-    int width = 60;
-    int height = 30;
+    const int width = 60;
+    const int height = 30;
 
-    char bg_ascii_char = ' ';
+    const char bg_ascii_char = ' ';
 
     char *buffer;
 
@@ -35,7 +35,10 @@ private:
     float B = 0;
     float C = 0;
 
-    float cube_side = 7.5;
+    const int K1 = 60;
+    const int Z_OFFSET = 25;
+
+    const float cube_side = 7.5;
 
     std::vector<Vertex> vertices;
     std::vector<std::vector<int>> edges;
@@ -102,10 +105,7 @@ public:
             {2, 6},
             {3, 7} // connecting edges
         };
-    }
 
-    bool play(int client_socket)
-    {
         // UPDATE VERTEX BASED ON CUBE SIZE
         for (Vertex &v : vertices)
         {
@@ -113,6 +113,15 @@ public:
             v.y = v.y * cube_side / 2;
             v.z = v.z * cube_side / 2;
         }
+    }
+
+    ~Cube()
+    {
+        delete[] buffer;
+    }
+
+    bool play(int client_socket)
+    {
 
         while (true)
         {
@@ -122,7 +131,7 @@ public:
             // DRAWING LOGIC GOES HERE ------------------------->
 
             // TODO: SET SIZE BASED ON VERTICES
-            std::vector<Vec2> projected;
+            std::vector<Vec2> projected_vertices;
 
             for (int i = 0; i < vertices.size(); i += 1)
             {
@@ -130,24 +139,22 @@ public:
 
                 float x = calculateX(v.x, v.y, v.z);
                 float y = calculateY(v.x, v.y, v.z);
-                float z = calculateZ(v.x, v.y, v.z) + 25;
+                float z = calculateZ(v.x, v.y, v.z) + Z_OFFSET;
 
                 float ooz = 1 / z;
-
-                int K1 = 60;
 
                 int xp = (int)(width / 2 + ooz * x * 2 * K1);
                 int yp = (int)(height / 2 + ooz * y * K1);
 
-                projected.push_back({(float)xp, (float)yp});
+                projected_vertices.push_back({(float)xp, (float)yp});
             }
 
             for (int i = 0; i < edges.size(); i += 1)
             {
                 const std::vector<int> &edge = edges[i];
 
-                Vec2 A = projected[edge[0]];
-                Vec2 B = projected[edge[1]];
+                Vec2 A = projected_vertices[edge[0]];
+                Vec2 B = projected_vertices[edge[1]];
 
                 int x0 = A.x;
                 int y0 = A.y;
@@ -155,12 +162,12 @@ public:
                 int x1 = B.x;
                 int y1 = B.y;
 
-                char ch = '#';
-
                 // BRESENHAM'S LINE ALGORITHM
                 int dx = std::abs(x1 - x0), dy = -std::abs(y1 - y0);
                 int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
                 int err = dx + dy;
+
+                char ch = '#';
 
                 while (true)
                 {
@@ -185,11 +192,9 @@ public:
 
             // WATERMARK
             std::string watermark = "CUBE";
-            int index = (height / 2) * width + width / 2 - watermark.length() / 2;
-            buffer[index] = 'C';
-            buffer[index + 1] = 'U';
-            buffer[index + 2] = 'B';
-            buffer[index + 3] = 'E';
+            int index = (height / 2) * width + width / 2 - watermark.size() / 2;
+            for (size_t i = 0; i < watermark.size(); ++i)
+                buffer[index + i] = watermark[i];
 
             // RENDER
             std::string canvas = render();
