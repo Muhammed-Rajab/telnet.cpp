@@ -41,6 +41,7 @@ private:
     std::vector<std::vector<int>> edges;
 
     bool is_playing = true;
+    float speed = 1.0f;
 
     std::string render()
     {
@@ -120,9 +121,10 @@ public:
 
             // DRAWING LOGIC GOES HERE ------------------------->
 
-            Vec2 projected[8];
+            // TODO: SET SIZE BASED ON VERTICES
+            std::vector<Vec2> projected;
 
-            for (int i = 0; i < 8; i += 1)
+            for (int i = 0; i < vertices.size(); i += 1)
             {
                 Vertex &v = vertices[i];
 
@@ -137,10 +139,10 @@ public:
                 int xp = (int)(width / 2 + ooz * x * 2 * K1);
                 int yp = (int)(height / 2 + ooz * y * K1);
 
-                projected[i] = {(float)xp, (float)yp};
+                projected.push_back({(float)xp, (float)yp});
             }
 
-            for (int i = 0; i < 12; i += 1)
+            for (int i = 0; i < edges.size(); i += 1)
             {
                 const std::vector<int> &edge = edges[i];
 
@@ -191,7 +193,7 @@ public:
 
             // RENDER
             std::string canvas = render();
-            std::string endMenu = Colors::Bright_Black + "\n[q]uit         [m]enu        [<space>] play/pause " + Colors::Reset;
+            std::string endMenu = Colors::Bright_Black + "\n[q]uit         [m]enu        [<space>] play/pause          [[/]] speed ↑/↓\n" + Colors::Reset;
             canvas = canvas + endMenu;
 
             send(client_socket, canvas.c_str(), canvas.length(), 0);
@@ -199,9 +201,9 @@ public:
             // UPDATE
             if (is_playing)
             {
-                A += 0.05;
-                B += 0.05;
-                C += 0.01;
+                A += 0.05 * speed;
+                B += 0.05 * speed;
+                C += 0.01 * speed;
             }
 
             // INPUT HANDLING
@@ -235,6 +237,30 @@ public:
                     else if (c == ' ')
                     {
                         is_playing = !is_playing;
+                        flush_socket(client_socket);
+                    }
+                    else if (c == '[')
+                    {
+                        if (speed - 0.25 < 0)
+                        {
+                            speed = 0;
+                        }
+                        else
+                        {
+                            speed = speed - 0.25;
+                        }
+                        flush_socket(client_socket);
+                    }
+                    else if (c == ']')
+                    {
+                        if (speed + 0.25 > 3)
+                        {
+                            speed = 3;
+                        }
+                        else
+                        {
+                            speed = speed + 0.25;
+                        }
                         flush_socket(client_socket);
                     }
                 }
