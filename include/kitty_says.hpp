@@ -13,6 +13,28 @@
 
 namespace Kittysays
 {
+    const std::vector<std::vector<std::string>> kitty_frames = {
+        {
+            "  /\\_/\\ ",
+            " ( o.o ) ",
+            "  > ^ <  ",
+        },
+        {
+            "  /\\_/\\ ",
+            " ( -.- ) ",
+            "  > ^ <  ",
+        },
+        {
+            "  /\\_/\\ ",
+            " ( -.- ) ",
+            "  > ^ <  ",
+        },
+        {
+            "  /\\_/\\ ",
+            " ( o.o ) ",
+            "  > ^ <  ",
+        },
+    };
 
     namespace Quotes
     {
@@ -59,7 +81,7 @@ namespace Kittysays
         {
             if (count > collection.size())
             {
-                throw "the fuck you doin? set count <= collection.size()";
+                throw std::runtime_error("the fuck you doin? set count <= collection.size()");
             }
 
             std::vector<std::string> result;
@@ -74,52 +96,12 @@ namespace Kittysays
             return result;
         }
 
-        std::vector<std::string> getStoicQuotes(size_t count)
-        {
-            if (count > stoic.size())
-            {
-                throw "we have only 8 stoic quotes. keep count <= 8";
-            }
-
-            return getQuotes(stoic, count);
-        }
-
-        std::vector<std::string> getNihilQuotes(size_t count)
-        {
-            if (count > nihil.size())
-            {
-                throw "we have only 8 nihilistic quotes. keep count <= 8";
-            }
-
-            return getQuotes(nihil, count);
-        }
-
-        std::vector<std::string> getExistentialQuotes(size_t count)
-        {
-            if (count > nihil.size())
-            {
-                throw "we have only 8 existential quotes. keep count <= 8";
-            }
-
-            return getQuotes(existential, count);
-        }
-
-        std::vector<std::string> getAbsurdQuotes(size_t count)
-        {
-            if (count > absurd.size())
-            {
-                throw "we have only 8 absurd quotes. keep count <= 8";
-            }
-
-            return getQuotes(absurd, count);
-        }
-
         std::vector<std::string> getRandomQuotes(size_t count)
         {
             // XXX:
             if (count > absurd.size())
             {
-                throw "we only have 8 quotes per category. keep count <= 8";
+                throw std::runtime_error("we only have 8 quotes per category. keep count <= 8");
             }
 
             std::vector<std::string> *categories[4] = {
@@ -135,28 +117,6 @@ namespace Kittysays
 
     bool play(int client_socket)
     {
-        std::vector<std::vector<std::string>> kitty_frames = {
-            {
-                "  /\\_/\\ ",
-                " ( o.o ) ",
-                "  > ^ <  ",
-            },
-            {
-                "  /\\_/\\ ",
-                " ( -.- ) ",
-                "  > ^ <  ",
-            },
-            {
-                "  /\\_/\\ ",
-                " ( -.- ) ",
-                "  > ^ <  ",
-            },
-            {
-                "  /\\_/\\ ",
-                " ( o.o ) ",
-                "  > ^ <  ",
-            },
-        };
 
         int frame_count = kitty_frames.size();
         int frame_index = 0;
@@ -168,7 +128,7 @@ namespace Kittysays
         std::string kitty_says = Colors::Bright_Black + Colors::Italic + "kitty says...\n" + Colors::Reset;
         std::string endMenu = Colors::Bright_Black + "\n[q]uit         [c]hange        [m]enu" + Colors::Reset;
 
-        char ch;
+        char ch = '\0';
 
         while (true)
         {
