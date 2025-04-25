@@ -90,15 +90,21 @@ void handler(int client_socket)
             {
                 break;
             }
+            flush_socket(client_socket);
         }
         else if (choice == "2")
         {
             Cube c;
-            c.play(client_socket);
+            if (!c.play(client_socket))
+            {
+                break;
+            }
+            flush_socket(client_socket);
         }
         else
         {
             clear_screen(client_socket);
+            std::cout << "ELSE CALLED" << "\n";
             std::string message = "CIAO CIAO!\n";
             send(client_socket, message.c_str(), message.length(), 0);
             break;

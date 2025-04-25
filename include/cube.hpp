@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+#include "colors.hpp"
+
 struct Vec2
 {
     float x;
@@ -23,7 +25,7 @@ struct Cube
 {
 private:
     int width = 60;
-    int height = 33;
+    int height = 30;
 
     char bg_ascii_char = ' ';
 
@@ -32,6 +34,8 @@ private:
     float A = 0;
     float B = 0;
     float C = 0;
+
+    float SCALE_THETA = 0;
 
     float cube_side = 7;
 
@@ -99,8 +103,10 @@ public:
         };
     }
 
-    void play(int client_socket)
+    bool play(int client_socket)
     {
+        // fcntl(client_socket, F_SETFL, O_NONBLOCK);
+
         // UPDATE VERTEX BASED ON CUBE SIZE
         for (Vertex &v : vertices)
         {
@@ -109,14 +115,13 @@ public:
             v.z = v.z * cube_side / 2;
         }
 
-        fcntl(client_socket, F_SETFL, O_NONBLOCK);
-
         while (true)
         {
             // RESET BUFFER
             memset(buffer, bg_ascii_char, width * height);
 
             // DRAWING LOGIC GOES HERE ------------------------->
+
             Vec2 projected[8];
 
             for (int i = 0; i < 8; i += 1)
@@ -188,6 +193,9 @@ public:
 
             // RENDER
             std::string canvas = render();
+            std::string endMenu = Colors::Bright_Black + "\n[q]uit         [m]enu" + Colors::Reset;
+            canvas = canvas + endMenu;
+
             send(client_socket, canvas.c_str(), canvas.length(), 0);
 
             // UPDATE
@@ -195,14 +203,39 @@ public:
             B += 0.05;
             C += 0.01;
 
-            // CHECK CONNECTION
-            char buffer[1024];
-            int bytes_received = recv(client_socket, buffer, sizeof(buffer), 0);
+            // INPUT HANDLING
+            char input_buffer[1024];
+            int bytes_received = recv(client_socket, input_buffer, sizeof(input_buffer), MSG_DONTWAIT);
 
             if (bytes_received > 0)
             {
-                // Data received
-                // Handle it
+                // check for ctrl+c
+                if ((unsigned char)input_buffer[0] == 0xFF && (unsigned char)input_buffer[1] == 0xF4)
+                {
+                    std::cout << "Ctrl+Ced from cube" << std::endl;
+                    close(client_socket);
+                    break;
+                }
+
+                // check for 'q' or 'm'
+                for (int i = 0; i < bytes_received; ++i)
+                {
+                    char c = input_buffer[i];
+                    if (c == 'q')
+                    {
+                        std::cout << "Received: q -> quit" << std::endl;
+                        flush_socket(client_socket);
+                        return false;
+                    }
+                    else if (c == 'm')
+                    {
+                        std::cout << "Received: m -> menu" << std::endl;
+                        flush_socket(client_socket);
+                        return true;
+                    }
+                }
+
+                flush_socket(client_socket);
             }
             else if (bytes_received == 0)
             {
@@ -223,6 +256,7 @@ public:
             // DELAY
             usleep(8000 * 5);
         }
+        return false;
     }
 };
 
