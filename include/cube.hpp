@@ -35,7 +35,7 @@ private:
     float B = 0;
     float C = 0;
 
-    float cube_side = 7;
+    float cube_side = 7.5;
 
     std::vector<Vertex> vertices;
     std::vector<std::vector<int>> edges;
