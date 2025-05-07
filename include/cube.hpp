@@ -2,6 +2,7 @@
 #define CUBE_HPP
 
 #include <iostream>
+#include <vector>
 #include <sstream>
 #include <cmath>
 #include <cstring>
@@ -9,6 +10,7 @@
 #include <sys/socket.h>
 
 #include "colors.hpp"
+#include "utils.hpp"
 
 struct Vec2
 {
