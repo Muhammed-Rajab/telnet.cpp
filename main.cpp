@@ -53,19 +53,31 @@ void handler(int client_socket, std::string client_ip, uint16_t client_port) {
   cout_thread_safe(oss.str());
 }
 
-int main() {
-  /*
-  =------------=
-  | telnet.cpp |
-  =------------=
+int main(int argc, char *argv[]) {
 
-  wanna show cool graphics via TCP? here you got it!
+  if (argc < 2) {
+    std::cout << "Usage: " << argv[0] << " <port>" << std::endl;
+    return 1;
+  }
 
-  GOALS: Be able to stream text or animation via TCP socket and telnet.
-  */
+  int port;
+  try {
+    port = std::stoi(argv[1]); // Convert the string to an integer
+  } catch (const std::invalid_argument &e) {
+    std::cerr << "INVALID PORT NUMBER" << std::endl;
+    return 1;
+  } catch (const std::out_of_range &e) {
+    std::cerr << "PORT NUMBER OUT OF RANGE" << std::endl;
+    return 1;
+  }
 
-  Server s(1337);
+  if (port < 1024 || port > 65535) {
+    std::cerr << "PORT NUMBER MUST BE BETWEEN 1024 AND 65535." << std::endl;
+    return 1;
+  }
 
+  // Server
+  Server s(port);
   s.listen(handler);
 
   return EXIT_SUCCESS;

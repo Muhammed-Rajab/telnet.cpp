@@ -49,7 +49,9 @@ public:
     ::listen(this->server_fd, 3);
 
     std::cout << "Server started successfully!" << std::endl;
+    std::cout << std::endl;
     std::cout << "Run `telnet localhost " << port << '`' << std::endl;
+    std::cout << std::endl;
 
     while (true) {
       int client_socket =
