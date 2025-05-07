@@ -8,7 +8,6 @@
 #include "include/kitty_says.hpp"
 
 void handler(int client_socket) {
-  bool running = true;
   do {
     clear_screen(client_socket);
 
