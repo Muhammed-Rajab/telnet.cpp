@@ -7,7 +7,7 @@
 #include "include/cube.hpp"
 #include "include/kitty_says.hpp"
 
-void handler(int client_socket) {
+void handler(int client_socket, std::string client_ip, uint16_t client_port) {
   do {
     clear_screen(client_socket);
 
@@ -44,6 +44,13 @@ void handler(int client_socket) {
   } while (true);
 
   close(client_socket);
+
+  // Log close message
+  std::ostringstream oss;
+  std::string timestamp = get_current_timestamp();
+  oss << "[" << timestamp << "] DISCONNECTED from " << client_ip << ":"
+      << client_port << "\n";
+  cout_thread_safe(oss.str());
 }
 
 int main() {

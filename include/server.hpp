@@ -1,12 +1,14 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <fcntl.h>
 #include <functional>
 #include <iostream>
 #include <netinet/in.h>
+#include <sstream>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <thread>
@@ -43,7 +45,7 @@ public:
     }
   }
 
-  void listen(std::function<void(int)> handler) {
+  void listen(std::function<void(int, std::string, uint16_t)> handler) {
     ::listen(this->server_fd, 3);
 
     std::cout << "Server started successfully!" << std::endl;
@@ -65,9 +67,11 @@ public:
       uint16_t client_port = ntohs(this->address.sin_port);
 
       // Log the connection details with timestamp
+      std::ostringstream oss;
       std::string timestamp = get_current_timestamp();
-      std::cout << "[" << timestamp << "] NEW CONNECTION from " << client_ip
-                << ":" << client_port << std::endl;
+      oss << "[" << timestamp << "] NEW CONNECTION from " << client_ip << ":"
+          << client_port << "\n";
+      cout_thread_safe(oss.str());
 
       // Set a timeout for receiving data (e.g., 30 seconds)
       struct timeval timeout;
@@ -78,8 +82,9 @@ public:
         perror("setsockopt(SO_RCVTIMEO) failed");
       }
 
-      std::thread([handler, client_socket]() {
-        handler(client_socket);
+      std::string client_ip_str{client_ip};
+      std::thread([client_socket, client_ip_str, client_port, handler]() {
+        handler(client_socket, client_ip_str, client_port);
       }).detach();
     }
   }

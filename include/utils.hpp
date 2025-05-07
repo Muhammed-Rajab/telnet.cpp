@@ -6,6 +6,8 @@
 #include <ctime>
 #include <fcntl.h>
 #include <iomanip>
+#include <iostream>
+#include <mutex>
 #include <sstream>
 #include <string>
 #include <unistd.h>
@@ -58,4 +60,14 @@ std::string get_current_timestamp() {
   ss << std::put_time(std::localtime(&now_time), "%Y-%m-%d %H:%M:%S");
   return ss.str();
 }
+
+// Global mutex to protect std::cout
+std::mutex output_mutex;
+
+// Thread-safe function to print messages
+void cout_thread_safe(const std::string &message) {
+  std::lock_guard<std::mutex> guard(output_mutex); // Lock the mutex
+  std::cout << message << std::endl;               // Safe output to console
+}
+
 #endif
